@@ -1,6 +1,7 @@
 #include <iostream>
 #include "SDL.h"
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 enum Direction {
 	UP,
@@ -76,6 +77,9 @@ int main(int argc, char* argv[])
 	int textureWidth, textureHeight;
 
 	SDL_Init(SDL_INIT_VIDEO);
+	if (TTF_Init() < 0) {
+		std::cout << "Error ttf: " << TTF_GetError() << std::endl;
+	}
 	window = SDL_CreateWindow("First Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
 	renderTarget = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	currentImage = LoadTexture("resources/standard/walk.png", renderTarget);
@@ -88,6 +92,19 @@ int main(int argc, char* argv[])
 	playerRect.x = playerRect.y = 0;
 	playerRect.w = frameWidth;
 	playerRect.h = frameHeight;
+
+
+	TTF_Font *font = TTF_OpenFont("resources/fonts/Stardew_Valley.otf", 20);
+	SDL_Color color = { 144,77,255,255 };
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "New added text", color);
+	SDL_Texture* text = SDL_CreateTextureFromSurface(renderTarget, textSurface);
+	SDL_Rect textRect;
+	textRect.x = textRect.y = 0;
+
+	SDL_QueryTexture(text, NULL, NULL, &textRect.w, &textRect.h);
+
+	SDL_FreeSurface(textSurface);
+	textSurface = nullptr;
 
 	bool isRunning = true;
 	SDL_Event ev;
@@ -135,14 +152,17 @@ int main(int argc, char* argv[])
 
 
 		SDL_RenderClear(renderTarget);
+		SDL_RenderCopy(renderTarget, text, NULL, &textRect);
+
 		SDL_RenderCopy(renderTarget, currentImage, &playerRect, &playPosition);
 		SDL_RenderPresent(renderTarget);
 	}
 	SDL_DestroyTexture(currentImage);
 	SDL_DestroyRenderer(renderTarget);
-
+	SDL_DestroyTexture(text);
 	SDL_DestroyWindow(window);
 	window = nullptr;
 	SDL_Quit();
+	IMG_Quit();
 	return 0;
 }

@@ -1,10 +1,10 @@
 ﻿  Main.cpp
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(112,23): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(112,33): warning C4552: '*': result of expression not used
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(116,23): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(116,33): warning C4552: '*': result of expression not used
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(120,23): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(120,33): warning C4552: '*': result of expression not used
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(124,23): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
-D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(124,33): warning C4552: '*': result of expression not used
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(129,23): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(129,33): warning C4552: '*': result of expression not used
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(133,23): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(133,33): warning C4552: '*': result of expression not used
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(137,23): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(137,33): warning C4552: '*': result of expression not used
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(141,23): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\Programming\C++\Game Dev\SDLIntro\SDLIntro\Main.cpp(141,33): warning C4552: '*': result of expression not used
   SDLIntro.vcxproj -> D:\Programming\C++\Game Dev\SDLIntro\x64\Debug\SDLIntro.exe
