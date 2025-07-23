@@ -1,42 +1,148 @@
 #include <iostream>
 #include "SDL.h"
-int main(int argc, char* argv[])
-{
-	SDL_Window *window = nullptr;
-	SDL_Surface *windowSurface = nullptr;
-	SDL_Surface *imageSurfcace = nullptr;
+#include <SDL_image.h>
 
-	if(SDL_Init(SDL_INIT_VIDEO) < 0){
-		std::cout << "Video init error: " << SDL_GetError();
+enum Direction {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+	NONE
+};
+
+
+SDL_Texture *LoadTexture(std::string filepath, SDL_Renderer *renderTarget) {
+	SDL_Texture *texture = nullptr;
+	SDL_Surface *surface = IMG_Load(filepath.c_str());
+
+	if (surface == NULL) {
+		std::cout << "Error" << std::endl;
 	}
 	else {
-		window = SDL_CreateWindow("First Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
-		if (window == NULL) {
-			std::cout << "Window creation failed: " << SDL_GetError();
+		texture = SDL_CreateTextureFromSurface(renderTarget, surface);
+	}
+	SDL_FreeSurface(surface);
+	return texture;
+}
 
-		}
-		else {
-			//After window has been created
-			windowSurface = SDL_GetWindowSurface(window);
-			imageSurfcace = SDL_LoadBMP("resources/test.bmp");
+void UpdateSpriteAnimation(Direction movementDirection, float &frameTime, float &deltaTime, SDL_Rect &playerRect, int &frameWidth, int &textureWidth) {
+	frameTime += deltaTime;
 
-			if (imageSurfcace == NULL) {
-				std::cout << "Image load error: " << SDL_GetError();
-			}
-			else {
-				//Take the image surface and display it on the window surface
-				SDL_BlitSurface(imageSurfcace, NULL, windowSurface, NULL);
-				SDL_UpdateWindowSurface(window);
-				SDL_Delay(5000);
-			}
-		}
+	if (movementDirection == DOWN) {
+		playerRect.x, playerRect.y = 128;
+	}
+	if (movementDirection == RIGHT) {
+		playerRect.x, playerRect.y = 192;
+	}
+	if (movementDirection == LEFT) {
+		playerRect.x, playerRect.y = 64;
+	}
+	if (movementDirection == UP) {
+		playerRect.x, playerRect.y = 0;
 	}
 
-	SDL_FreeSurface(imageSurfcace);
-	imageSurfcace = nullptr;
+	if (frameTime >= 0.05f) {
+
+		frameTime = 0;
+		playerRect.x += frameWidth;
+
+		if (playerRect.x >= textureWidth) {
+			playerRect.x = 0;
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	const int FPS = 180;
+	float frameTime = 0;
+	int prevTime = 0;
+	int currentTime = 0;
+	float deltaTime = 0;
+	float moveSpeed = 1.0f;
+	const Uint8 *keyState;
+
+	SDL_Window* window = nullptr;
+	SDL_Texture *currentImage= nullptr;
+	SDL_Renderer* renderTarget = nullptr;
+	SDL_Rect playerRect;
+
+	SDL_Rect playPosition;
+	playPosition.x = playPosition.y = 0;
+	playPosition.w = playPosition.h = 128;
+	Direction movementDirection = NONE;
+
+	int frameWidth, frameHeight;
+	int textureWidth, textureHeight;
+
+	SDL_Init(SDL_INIT_VIDEO);
+	window = SDL_CreateWindow("First Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
+	renderTarget = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	currentImage = LoadTexture("resources/standard/walk.png", renderTarget);
+
+	SDL_QueryTexture(currentImage, NULL, NULL, &textureWidth, &textureHeight);
+
+	frameWidth = textureWidth / 9;
+	frameHeight = textureHeight / 4;
+
+	playerRect.x = playerRect.y = 0;
+	playerRect.w = frameWidth;
+	playerRect.h = frameHeight;
+
+	bool isRunning = true;
+	SDL_Event ev;
+
+	//Game loop
+	while (isRunning) {
+		
+		prevTime = currentTime;
+		currentTime = SDL_GetTicks();
+		deltaTime = (currentTime - prevTime) / 1000.0f;
+
+		//Event loop
+		while (SDL_PollEvent(&ev) != 0) {
+			if (ev.type == SDL_QUIT) {
+				isRunning = false;
+			}
+		}
+
+		keyState = SDL_GetKeyboardState(NULL);
+		if (keyState[SDL_SCANCODE_RIGHT]) {
+			movementDirection = RIGHT;
+			(playPosition.x += moveSpeed)* deltaTime;
+		}
+		else if (keyState[SDL_SCANCODE_LEFT]) {
+			movementDirection = LEFT;
+			(playPosition.x -= moveSpeed)* deltaTime;
+		}
+		else if (keyState[SDL_SCANCODE_UP]) {
+			movementDirection = UP;
+			(playPosition.y -= moveSpeed)* deltaTime;
+		}
+		else if (keyState[SDL_SCANCODE_DOWN]) {
+			movementDirection = DOWN;
+			(playPosition.y += moveSpeed)* deltaTime;
+		}
+
+		if (!keyState[SDL_SCANCODE_LEFT] && !keyState[SDL_SCANCODE_RIGHT] && !keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
+			movementDirection = NONE;
+
+		}
+		
+		if (movementDirection != NONE) {
+			UpdateSpriteAnimation(movementDirection, frameTime, deltaTime, playerRect, frameWidth, textureWidth);
+		}
+
+
+		SDL_RenderClear(renderTarget);
+		SDL_RenderCopy(renderTarget, currentImage, &playerRect, &playPosition);
+		SDL_RenderPresent(renderTarget);
+	}
+	SDL_DestroyTexture(currentImage);
+	SDL_DestroyRenderer(renderTarget);
+
 	SDL_DestroyWindow(window);
 	window = nullptr;
-	windowSurface = nullptr;
 	SDL_Quit();
 	return 0;
 }
