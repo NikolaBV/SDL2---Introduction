@@ -2,6 +2,7 @@
 #include "SDL.h"
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 enum Direction {
 	UP,
@@ -40,6 +41,7 @@ void UpdateSpriteAnimation(Direction movementDirection, float &frameTime, float 
 	}
 	if (movementDirection == UP) {
 		playerRect.x, playerRect.y = 0;
+
 	}
 
 	if (frameTime >= 0.05f) {
@@ -61,8 +63,8 @@ int main(int argc, char* argv[])
 	int currentTime = 0;
 	float deltaTime = 0;
 	float moveSpeed = 1.0f;
-	const Uint8 *keyState;
 
+	const Uint8 *keyState;
 	SDL_Window* window = nullptr;
 	SDL_Texture *currentImage= nullptr;
 	SDL_Renderer* renderTarget = nullptr;
@@ -76,11 +78,31 @@ int main(int argc, char* argv[])
 	int frameWidth, frameHeight;
 	int textureWidth, textureHeight;
 
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	if (TTF_Init() < 0) {
 		std::cout << "Error ttf: " << TTF_GetError() << std::endl;
 	}
 	window = SDL_CreateWindow("First Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
+		std::cout << "Error loading audio: " << Mix_GetError() << std::endl;
+		return -1;
+	}
+
+	Mix_Music* backgroundMusic = Mix_LoadMUS("resources/sound/music.wav");
+	if (backgroundMusic == nullptr) {
+		std::cout << "Error loading music: " << Mix_GetError() << std::endl;
+		std::cout << "Make sure the file 'resources/sound/music.mp3' exists and is a valid MP3 file." << std::endl;
+	}
+	else {
+		std::cout << "Music loaded successfully!" << std::endl;
+	}
+	
+	Mix_Chunk* soundEffect = Mix_LoadWAV("resources/sound/sound.wav");
+	if (soundEffect == nullptr) {
+		std::cout << "Error loading sound effect: " << Mix_GetError() << std::endl;
+	}
+
 	renderTarget = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	currentImage = LoadTexture("resources/standard/walk.png", renderTarget);
 
@@ -121,6 +143,32 @@ int main(int argc, char* argv[])
 			if (ev.type == SDL_QUIT) {
 				isRunning = false;
 			}
+			else if (ev.type == SDL_KEYDOWN) {
+				switch (ev.key.keysym.sym) {
+				case SDLK_p:
+					if (backgroundMusic != nullptr) {
+						if (!Mix_PlayingMusic()) {
+							Mix_PlayMusic(backgroundMusic, -1);
+						}
+						else if (Mix_PausedMusic()) {
+							Mix_ResumeMusic();
+						}
+						else {
+							Mix_PauseMusic();
+						}
+					}
+					break;
+				case SDLK_s:
+					Mix_HaltMusic();
+					break;
+				case SDLK_1:
+					Mix_PlayChannel(-1, soundEffect, 0);
+					Mix_HaltChannel(1);
+					break;
+				}
+			
+				
+			}
 		}
 
 		keyState = SDL_GetKeyboardState(NULL);
@@ -157,6 +205,12 @@ int main(int argc, char* argv[])
 		SDL_RenderCopy(renderTarget, currentImage, &playerRect, &playPosition);
 		SDL_RenderPresent(renderTarget);
 	}
+
+	//Clean up
+	Mix_FreeMusic(backgroundMusic);
+	Mix_FreeChunk(soundEffect);
+	Mix_CloseAudio();
+	
 	SDL_DestroyTexture(currentImage);
 	SDL_DestroyRenderer(renderTarget);
 	SDL_DestroyTexture(text);
@@ -164,5 +218,7 @@ int main(int argc, char* argv[])
 	window = nullptr;
 	SDL_Quit();
 	IMG_Quit();
+	TTF_Quit();
+	Mix_Quit();
 	return 0;
 }
