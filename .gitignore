@@ -438,14 +438,24 @@ $RECYCLE.BIN/
 *.a
 *.so
 *.dylib
-*.dll
 *.exe
 *.out
 *.app
 
-# SDL2 specific
-*.dll
-*.lib
+# SDL2 specific - exclude build artifacts but keep library files
+# Ignore DLLs and libs in build directories, but keep them in lib/ folder
+**/Debug/*.dll
+**/Release/*.dll
+**/x64/Debug/*.dll
+**/x64/Release/*.dll
+**/x86/Debug/*.dll
+**/x86/Release/*.dll
+**/Debug/*.lib
+**/Release/*.lib
+**/x64/Debug/*.lib
+**/x64/Release/*.lib
+**/x86/Debug/*.lib
+**/x86/Release/*.lib
 *.pdb
 
 # CMake
