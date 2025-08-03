@@ -32,17 +32,16 @@ Player::Player(SDL_Renderer* renderTarget, std::string filePath, int x, int y, i
 	playerNumber++;
 
 	if (playerNumber == 1) {
-		//TODO Use a for loop to assgin these
-		keys[0] = SDL_SCANCODE_W;
-		keys[1] = SDL_SCANCODE_S;
-		keys[2] = SDL_SCANCODE_A;
-		keys[3] = SDL_SCANCODE_D;
+
+		for (int i = 0; i <= MOVEMENTKEYS_LENGTH; i++) {
+			keys[i] = playerOneKeys[i];
+		}
+
 	}
 	else {
-		keys[0] = SDL_SCANCODE_UP;
-		keys[1] = SDL_SCANCODE_DOWN;
-		keys[2] = SDL_SCANCODE_LEFT;
-		keys[3] = SDL_SCANCODE_RIGHT;
+		for (int i = 0; i <= MOVEMENTKEYS_LENGTH; i++) {
+			keys[i] = playerTwoKeys[i];
+		}
 	}
 
 	moveSpeed = 1.0f;

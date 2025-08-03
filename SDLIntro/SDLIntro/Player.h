@@ -2,26 +2,36 @@
 #include "SDL.h"
 #include <string>
 
-enum Direction {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	NONE
-};
 
 class Player
 {
 private:
 	SDL_Rect cropRect;
 	SDL_Texture* texture;
-	Direction movementDirection;
 	float moveSpeed;
 	float frameCounter;
 	int frameWidth, frameHeight;
 	int textureWidth;
 	bool isActive;
-	SDL_Scancode keys[4];
+
+	const static int MOVEMENTKEYS_LENGTH = 4;
+	SDL_Scancode playerOneKeys[MOVEMENTKEYS_LENGTH] =
+	{
+		SDL_SCANCODE_W,
+		SDL_SCANCODE_S,
+		SDL_SCANCODE_A,
+		SDL_SCANCODE_D
+	};
+	SDL_Scancode playerTwoKeys[MOVEMENTKEYS_LENGTH] =
+	{
+		SDL_SCANCODE_UP,
+		SDL_SCANCODE_DOWN,
+		SDL_SCANCODE_LEFT,
+		SDL_SCANCODE_RIGHT
+	};
+
+	SDL_Scancode keys[MOVEMENTKEYS_LENGTH];
+
 
 public:
 	Player(SDL_Renderer *renderTarget, std::string filePath, int x, int y, int framesX, int framesY);
