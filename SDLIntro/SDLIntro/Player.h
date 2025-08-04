@@ -13,6 +13,8 @@ private:
 	int frameWidth, frameHeight;
 	int textureWidth;
 	bool isActive;
+	int originX, originY;
+	int radius;
 
 	const static int MOVEMENTKEYS_LENGTH = 4;
 	SDL_Scancode playerOneKeys[MOVEMENTKEYS_LENGTH] =
@@ -40,7 +42,12 @@ public:
 	void Update(float deltaTime, const Uint8* keyState);
 	void Draw(SDL_Renderer *renderTarget);
 	void UpdateSpriteAnimation(float& frameCounter, float& deltaTime, SDL_Rect& cropRect, int& frameWidth, int& textureWidth);
+	bool IntersectsWithBoundingBox(Player &player);
+	bool IntersectsWithDistanceBased(Player& player);
 
 	SDL_Rect positionRect;
+	int getOriginX();
+	int getOriginY();
+	int getRadius();
 };
 

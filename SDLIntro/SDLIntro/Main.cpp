@@ -41,6 +41,8 @@ int main(int argc, char* argv[])
 		playerOne.Update(deltaTime, keyState);
 		playerTwo.Update(deltaTime, keyState);
 
+		playerOne.IntersectsWithDistanceBased(playerTwo);
+
 		playerOne.Draw(renderTarget);
 		playerTwo.Draw(renderTarget);
 

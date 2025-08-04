@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <SDL_image.h>
 #include <iostream>
+#include <cmath>
 
 Player::Player(SDL_Renderer* renderTarget, std::string filePath, int x, int y, int framesX, int framesY) {
 	SDL_Surface* surface = IMG_Load(filePath.c_str());
@@ -25,6 +26,11 @@ Player::Player(SDL_Renderer* renderTarget, std::string filePath, int x, int y, i
 
 	frameWidth = positionRect.w = cropRect.w;
 	frameHeight = positionRect.h = cropRect.h;
+
+	originX = frameWidth / 2;
+	originY = frameHeight / 2;
+
+	radius = frameWidth / 2; //Decrease radius if want to delay the collision
 
 	isActive = false;
 
@@ -97,3 +103,27 @@ void Player::Update(float deltaTime, const Uint8* keyState) {
 void Player::Draw(SDL_Renderer* renderTarget) {
 	SDL_RenderCopy(renderTarget, texture, &cropRect, &positionRect);
 }
+
+bool Player::IntersectsWithBoundingBox(Player& player) {
+	if (positionRect.x + positionRect.w < player.positionRect.x || positionRect.x > player.positionRect.x + player.positionRect.w ||
+		positionRect.y + positionRect.h < player.positionRect.y || positionRect.y > player.positionRect.y + player.positionRect.h) {
+		SDL_SetTextureColorMod(texture, 255, 255, 255);
+		return false;
+	}
+	SDL_SetTextureColorMod(texture, 255, 0, 0);
+	return true;
+}
+
+bool Player::IntersectsWithDistanceBased(Player& player) {
+	if (sqrt(pow(getOriginX() - player.getOriginX(), 2) + pow(getOriginY() - player.getOriginY(), 2)) >= radius + player.getRadius()) {
+		SDL_SetTextureColorMod(texture, 255, 255, 255);
+		return false;
+	}
+	SDL_SetTextureColorMod(texture, 255, 0, 0);
+	return true;
+}
+
+
+int Player::getOriginX() { return positionRect.x + originX; }
+int Player::getOriginY() { return positionRect.y + originY; }
+int Player::getRadius() { return radius; }
