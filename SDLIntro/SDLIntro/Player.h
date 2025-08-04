@@ -40,7 +40,7 @@ public:
 	~Player();
 
 	void Update(float deltaTime, const Uint8* keyState);
-	void Draw(SDL_Renderer *renderTarget);
+	void Draw(SDL_Renderer *renderTarget, SDL_Rect cameraRect);
 	void UpdateSpriteAnimation(float& frameCounter, float& deltaTime, SDL_Rect& cropRect, int& frameWidth, int& textureWidth);
 	bool IntersectsWithBoundingBox(Player &player);
 	bool IntersectsWithDistanceBased(Player& player);

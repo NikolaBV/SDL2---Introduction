@@ -30,7 +30,7 @@ Player::Player(SDL_Renderer* renderTarget, std::string filePath, int x, int y, i
 	originX = frameWidth / 2;
 	originY = frameHeight / 2;
 
-	radius = frameWidth / 2; //Decrease radius if want to delay the collision
+	radius = frameWidth / 2 - 10; //Decrease radius if want to delay the collision
 
 	isActive = false;
 
@@ -100,8 +100,9 @@ void Player::Update(float deltaTime, const Uint8* keyState) {
 	}
 }
 
-void Player::Draw(SDL_Renderer* renderTarget) {
-	SDL_RenderCopy(renderTarget, texture, &cropRect, &positionRect);
+void Player::Draw(SDL_Renderer* renderTarget, SDL_Rect cameraRect) {
+	SDL_Rect drawingRect = { positionRect.x - cameraRect.x, positionRect.y - cameraRect.y, positionRect.w, positionRect.h };
+	SDL_RenderCopy(renderTarget, texture, &cropRect, &drawingRect);
 }
 
 bool Player::IntersectsWithBoundingBox(Player& player) {
